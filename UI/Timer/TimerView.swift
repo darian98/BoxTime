@@ -13,6 +13,11 @@ struct TimerView: View {
     var body: some View {
         VStack(spacing: 20) {
             
+            Text(viewModel.currentRoundText)
+                .font(.system(size: 24, weight: .bold, design: .monospaced))
+            Text(viewModel.currentPhaseText)
+                .font(.system(size: 24, weight: .bold, design: .monospaced))
+            
             Text("\(viewModel.formattedRemaining) s")
                 .font(.system(size: 48, weight: .bold, design: .monospaced))
             

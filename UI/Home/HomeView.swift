@@ -18,7 +18,7 @@ struct HomeView: View {
             TabView(selection: $viewModel.activeTab) {
                 TimerView(viewModel: timerViewModel)
                     .tabItem { Label("Timer", systemImage: "clock") }
-                    .tag(AppTab.tab1)
+                    .tag(AppTab.timer)
                 
                 SettingsView(timerViewModel: timerViewModel)
                     .tabItem { Label("Settings", systemImage: "gearshape") }
