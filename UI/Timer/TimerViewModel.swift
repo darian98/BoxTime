@@ -27,6 +27,9 @@ class TimerViewModel: ObservableObject {
     
     private var timer: AnyCancellable?
     
+    var backgroundColor: Color {
+        activePhase == .work ? .green : .red
+    }
     
     var currentExerciseName: String {
         "\(currentExercise?.name ?? "")"
@@ -52,7 +55,7 @@ class TimerViewModel: ObservableObject {
             remainingSec = (activePhase == .work) ? workPhaseDuration : restPhaseDuration
         }
         guard remainingSec > 0 else { return }
-        currentRound += 1
+        if remainingRounds > 0 { currentRound += 1 }
         
         isRunning = true
         
