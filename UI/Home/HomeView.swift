@@ -12,6 +12,7 @@ struct HomeView: View {
     @StateObject var viewModel = HomeViewModel()
     @StateObject var timerViewModel = TimerViewModel()
     
+    
     var body: some View {
         VStack {
             

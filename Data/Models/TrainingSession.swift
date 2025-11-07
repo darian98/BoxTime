@@ -13,3 +13,4 @@ struct TrainingSession: Identifiable, Codable, Hashable {
     var date: Date
     var exercises: [Exercise]
 }
+
