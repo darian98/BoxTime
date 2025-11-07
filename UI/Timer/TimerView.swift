@@ -11,19 +11,28 @@ struct TimerView: View {
     @ObservedObject var viewModel: TimerViewModel
     
     var body: some View {
-        VStack(spacing: 20) {
+        ZStack {
+            viewModel.backgroundColor.ignoresSafeArea()
             
-            Text("\(viewModel.formattedRemaining) s")
-                .font(.system(size: 48, weight: .bold, design: .monospaced))
-            
-            HStack(spacing: 20) {
+            VStack(spacing: 20) {
                 
-                startTimerButtonView
+                Text(viewModel.currentRoundText)
+                    .font(.system(size: 24, weight: .bold, design: .monospaced))
+                Text(viewModel.currentPhaseText)
+                    .font(.system(size: 24, weight: .bold, design: .monospaced))
                 
-                resetTimerButtonView
+                Text("\(viewModel.formattedRemaining) s")
+                    .font(.system(size: 48, weight: .bold, design: .monospaced))
+                
+                HStack(spacing: 20) {
+                    
+                    startTimerButtonView
+                    
+                    resetTimerButtonView
+                }
             }
+            .padding()
         }
-        .padding()
     }
     
     private var startTimerButtonView: some View {

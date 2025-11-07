@@ -8,9 +8,9 @@ import SwiftUI
 import Combine
 
 enum AppTab: Hashable {
-    case tab1, tab2, tab3
+    case timer, tab2, tab3
 }
 
 class HomeViewModel: ObservableObject {
-    @Published var activeTab: AppTab = .tab1
+    @Published var activeTab: AppTab = .timer
 }

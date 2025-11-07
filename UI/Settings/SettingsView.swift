@@ -49,9 +49,23 @@ struct SettingsView: View {
                 }
             }
             
+            // Pausenphase
+            Section(header: Text("Rounds-Count")) {
+                HStack {
+                    Text("Runden")
+                    Spacer()
+                    TextField("10",
+                              value: $timerViewModel.roundCount,
+                              formatter: Self.secondsFormatter)
+                    .keyboardType(.decimalPad)
+                    .multilineTextAlignment(.trailing)
+                    .frame(maxWidth: 120)
+                }
+            }
+            
             Section {
                 Button {
-                    timerViewModel.reset() // Setzt remaining = duration
+                    timerViewModel.setTrainingTapped() // Setzt remaining = duration
                 } label: {
                     Label("Auf neue Dauer zurücksetzen", systemImage: "arrow.uturn.backward")
                 }
