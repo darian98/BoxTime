@@ -8,10 +8,8 @@
 import SwiftUI
 
 struct HomeView: View {
-    
     @StateObject var viewModel = HomeViewModel()
     @StateObject var timerViewModel = TimerViewModel()
-    
     
     var body: some View {
         VStack {
@@ -21,9 +19,13 @@ struct HomeView: View {
                     .tabItem { Label("Timer", systemImage: "clock") }
                     .tag(AppTab.timer)
                 
-                SettingsView(timerViewModel: timerViewModel)
-                    .tabItem { Label("Settings", systemImage: "gearshape") }
+                QuickStartView(timerViewModel: timerViewModel, homeViewModel: viewModel)
+                    .tabItem { Label("Schnellstart", systemImage: "gearshape") }
                     .tag(AppTab.tab2)
+                
+                TrainingListView(timerViewModel: timerViewModel, homeViewModel: viewModel)
+                    .tabItem { Label("TrainingSessions", systemImage: "book") }
+                    .tag(AppTab.tab3)
                 
             }
             

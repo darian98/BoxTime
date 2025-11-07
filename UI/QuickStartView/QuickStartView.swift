@@ -6,9 +6,10 @@
 //
 import SwiftUI
 
-struct SettingsView: View {
+struct QuickStartView: View {
     
     @ObservedObject var timerViewModel: TimerViewModel
+    @ObservedObject var homeViewModel: HomeViewModel
     
     // Formatter für "dezimal", aber ohne Nachkommastellen
     private static let secondsFormatter: NumberFormatter = {
@@ -66,15 +67,26 @@ struct SettingsView: View {
             Section {
                 Button {
                     timerViewModel.setTrainingTapped() // Setzt remaining = duration
+                    homeViewModel.activeTab = .timer
                 } label: {
-                    Label("Auf neue Dauer zurücksetzen", systemImage: "arrow.uturn.backward")
+                    Label("In Timer laden", systemImage: "tray.and.arrow.down.fill")
                 }
+                
+                // Laden + direkt starten
+                Button {
+                    timerViewModel.setTrainingTapped()
+                    timerViewModel.startTimer()             // sofort starten
+                    homeViewModel.activeTab = .timer
+                } label: {
+                    Label("Jetzt starten", systemImage: "play.circle.fill")
+                }
+                .tint(.green)
             }
         }
     }
 }
 
 #Preview {
-    SettingsView(timerViewModel: TimerViewModel())
+    QuickStartView(timerViewModel: TimerViewModel(), homeViewModel: HomeViewModel())
 }
 
