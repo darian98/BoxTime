@@ -11,6 +11,9 @@ struct TimerView: View {
             VStack(spacing: 20) {
                 // Übungs-Header
                 VStack(spacing: 4) {
+                    
+                    
+                    
                     Text(viewModel.currentExerciseName)
                         .font(.title2).bold()
                         .lineLimit(1)

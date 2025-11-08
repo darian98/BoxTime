@@ -69,7 +69,7 @@ struct QuickStartView: View {
                     timerViewModel.setTrainingTapped() // Setzt remaining = duration
                     homeViewModel.activeTab = .timer
                 } label: {
-                    Label("In Timer laden", systemImage: "tray.and.arrow.down.fill")
+                    Label("Speichern und zum Timer", systemImage: "tray.and.arrow.down.fill")
                 }
                 
                 // Laden + direkt starten
