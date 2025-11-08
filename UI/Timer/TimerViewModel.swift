@@ -108,6 +108,7 @@ class TimerViewModel: ObservableObject {
         isRunning = true
         
         SoundPlayer.shared.playSound(named: "openingBell", ext: "mp3")
+        bangHaptic()
         
         timer = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()

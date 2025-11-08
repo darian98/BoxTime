@@ -20,11 +20,11 @@ struct HomeView: View {
                     .tag(AppTab.timer)
                 
                 QuickStartView(timerViewModel: timerViewModel, homeViewModel: viewModel)
-                    .tabItem { Label("Schnellstart", systemImage: "gearshape") }
+                    .tabItem { Label("Schnellstart", systemImage: "bolt.fill") }
                     .tag(AppTab.tab2)
                 
                 TrainingListView(timerViewModel: timerViewModel, homeViewModel: viewModel)
-                    .tabItem { Label("TrainingSessions", systemImage: "book") }
+                    .tabItem { Label("TrainingSessions", systemImage: "list.bullet.rectangle") }
                     .tag(AppTab.tab3)
                 
             }
