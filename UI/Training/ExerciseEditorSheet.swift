@@ -5,7 +5,6 @@
 //  Created by Darian Hanci on 07.11.25.
 //
 
-// ExerciseEditorSheet.swift
 import SwiftUI
 import RealmSwift
 
@@ -22,10 +21,10 @@ struct ExerciseEditorSheet: View {
     
     init(initial: ExerciseEmbedded?, onSave: @escaping (ExerciseEmbedded) -> Void) {
         self.onSave = onSave
-        _name = State(initialValue: initial?.name ?? "")
+        _name   = State(initialValue: initial?.name ?? "")
         _rounds = State(initialValue: initial?.rounds ?? 10)
-        _work = State(initialValue: initial?.workPhaseDuration ?? 30)
-        _rest = State(initialValue: initial?.restPhaseDuration ?? 10)
+        _work   = State(initialValue: initial?.workPhaseDuration ?? 30)
+        _rest   = State(initialValue: initial?.restPhaseDuration ?? 10)
     }
     
     var body: some View {
@@ -35,17 +34,56 @@ struct ExerciseEditorSheet: View {
                     TextField("z.B. Boxsack", text: $name)
                         .textInputAutocapitalization(.words)
                 }
+                
                 Section("Runden & Zeiten (Sekunden)") {
-                    Stepper(value: $rounds, in: 1...99) {
-                        HStack { Text("Runden"); Spacer(); Text("\(rounds)") }
+                    
+                    // Runden
+                    HStack {
+                        Text("Runden")
+                        Spacer()
+                        
+                        TextField("", value: $rounds, format: .number)
+                            .keyboardType(.numberPad)
+                            .multilineTextAlignment(.trailing)
+                            .frame(width: 60)
+                        
+                        Stepper("", value: $rounds, in: 1...99, step: 5)
+                            .labelsHidden()
                     }
-                    Stepper(value: $work, in: 1...3600) {
-                        HStack { Text("Work"); Spacer(); Text("\(work) s") }
+                    
+                    // Work
+                    HStack {
+                        Text("Work")
+                        Spacer()
+                        
+                        TextField("", value: $work, format: .number)
+                            .keyboardType(.numberPad)
+                            .multilineTextAlignment(.trailing)
+                            .frame(width: 60)
+                        
+                        Text("s")
+                        
+                        Stepper("", value: $work, in: 1...3600, step: 5)
+                            .labelsHidden()
                     }
-                    Stepper(value: $rest, in: 0...3600) {
-                        HStack { Text("Rest"); Spacer(); Text("\(rest) s") }
+                    
+                    // Rest
+                    HStack {
+                        Text("Rest")
+                        Spacer()
+                        
+                        TextField("", value: $rest, format: .number)
+                            .keyboardType(.numberPad)
+                            .multilineTextAlignment(.trailing)
+                            .frame(width: 60)
+                        
+                        Text("s")
+                        
+                        Stepper("", value: $rest, in: 0...3600, step: 5)
+                            .labelsHidden()
                     }
                 }
+                
                 Section {
                     HStack {
                         Label("Gesamtzeit", systemImage: "clock")

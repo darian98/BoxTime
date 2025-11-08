@@ -20,49 +20,59 @@ struct TrainingListView: View {
     
     var body: some View {
         NavigationStack {
-            Group {
-                if sessions.isEmpty {
-                    ContentUnavailableView(
-                        "Noch keine Trainings",
-                        systemImage: "list.bullet.rectangle.portrait",
-                        description: Text("Erstelle dein erstes Training über den + Button.")
-                    )
-                } else {
-                    List {
-                        ForEach(sessions) { session in
-                            HStack {
-                                SessionRow(session: session)
-                                Spacer()
-                                
-                                Button {
-                                    // Training direkt im Timer starten
-                                    timerViewModel.load(session: session)
-                                    homeViewModel.activeTab = .timer
-                                } label: {
-                                    Image(systemName: "play.circle.fill")
-                                        .font(.system(size: 28))
-                                        .foregroundStyle(.green)
-                                        .padding(.horizontal, 6)
+            VStack {
+                Group {
+                    if sessions.isEmpty {
+                        ContentUnavailableView(
+                            "Noch keine Trainings",
+                            systemImage: "list.bullet.rectangle.portrait",
+                            description: Text("Erstelle dein erstes Training über den + Button.")
+                        )
+                    } else {
+                        List {
+                            ForEach(sessions) { session in
+                                HStack {
+                                    SessionRow(session: session)
+                                    Spacer()
+                                    
+                                    Button {
+                                        // Training direkt im Timer starten
+                                        timerViewModel.load(session: session)
+                                        homeViewModel.activeTab = .timer
+                                    } label: {
+                                        Image(systemName: "play.circle.fill")
+                                            .font(.system(size: 28))
+                                            .foregroundStyle(.green)
+                                            .padding(.horizontal, 6)
+                                    }
+                                    .buttonStyle(.plain)
+                                    .accessibilityLabel("Training starten")
                                 }
-                                .buttonStyle(.plain)
-                                .accessibilityLabel("Training starten")
-                            }
-                            .contentShape(Rectangle())                // <- NEU (macht ganze Row tappbar)
-                            .onTapGesture {
-                                print("Tapped")
-                                editingSession = session
-                            } // <- NEU (Sheet öffnen)
-                            .swipeActions(edge: .trailing) {
-                                Button(role: .destructive) {
-                                    delete(session: session)
-                                } label: {
-                                    Label("Löschen", systemImage: "trash")
+                                .contentShape(Rectangle())                // <- NEU (macht ganze Row tappbar)
+                                .onTapGesture {
+                                    print("Tapped")
+                                    editingSession = session
+                                } // <- NEU (Sheet öffnen)
+                                .swipeActions(edge: .trailing) {
+                                    Button(role: .destructive) {
+                                        delete(session: session)
+                                    } label: {
+                                        Label("Löschen", systemImage: "trash")
+                                    }
                                 }
                             }
                         }
+                        .listStyle(.insetGrouped)
                     }
-                    .listStyle(.insetGrouped)
                 }
+                // Beispiel: größere Banner nur für Nicht-Premium-Nutzer
+                AdBannerView(
+                    adUnitID: "ca-app-pub-3940256099942544/2435281174", // Test-ID
+                    bannerType: .largeBanner
+                )
+                .frame(height: BannerType.largeBanner.height)
+                .padding(.bottom, 24)
+
             }
             .navigationTitle("Trainings")
             .toolbar {

@@ -90,6 +90,14 @@ struct TimerView: View {
                         .cornerRadius(12)
                 }
                 .padding(.top, 6)
+                
+                Spacer()
+                AdBannerView(
+                    adUnitID: "ca-app-pub-3940256099942544/2435281174", // Test-ID
+                    bannerType: .banner
+                )
+                .frame(height: BannerType.banner.height)
+                
             }
             .padding()
         }
