@@ -11,7 +11,7 @@ struct SplashScreenView: View {
     var body: some View {
         VStack {
             LottieView(animationName: "boxingBonePuppy", loopMode: .loop)
-                .frame(width: 200, height: 200)
+                .frame(width: 240, height: 240)
         }
     }
 }

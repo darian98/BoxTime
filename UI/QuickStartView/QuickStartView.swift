@@ -21,67 +21,75 @@ struct QuickStartView: View {
     }()
     
     var body: some View {
-        Form {
-            Section(header: Text("Work-Phase-Duration")) {
-                HStack {
-                    Text("Sekunden")
-                    Spacer()
-                    // Eingabe direkt in viewModel.durationSec (Int) mit Formatter
-                    TextField("30",
-                              value: $timerViewModel.workPhaseDuration,
-                              formatter: Self.secondsFormatter)
-                    .keyboardType(.decimalPad)
-                    .multilineTextAlignment(.trailing)
-                    .frame(maxWidth: 120)
-                }
-            }
-            
-            // Pausenphase
-            Section(header: Text("Rest-Phase-Duration")) {
-                HStack {
-                    Text("Sekunden")
-                    Spacer()
-                    TextField("10",
-                              value: $timerViewModel.restPhaseDuration,
-                              formatter: Self.secondsFormatter)
-                    .keyboardType(.decimalPad)
-                    .multilineTextAlignment(.trailing)
-                    .frame(maxWidth: 120)
-                }
-            }
-            
-            // Pausenphase
-            Section(header: Text("Rounds-Count")) {
-                HStack {
-                    Text("Runden")
-                    Spacer()
-                    TextField("10",
-                              value: $timerViewModel.roundCount,
-                              formatter: Self.secondsFormatter)
-                    .keyboardType(.decimalPad)
-                    .multilineTextAlignment(.trailing)
-                    .frame(maxWidth: 120)
-                }
-            }
-            
-            Section {
-                Button {
-                    timerViewModel.setTrainingTapped() // Setzt remaining = duration
-                    homeViewModel.activeTab = .timer
-                } label: {
-                    Label("Speichern und zum Timer", systemImage: "tray.and.arrow.down.fill")
+        VStack {
+            Form {
+                Section(header: Text("Work-Phase-Duration")) {
+                    HStack {
+                        Text("Sekunden")
+                        Spacer()
+                        // Eingabe direkt in viewModel.durationSec (Int) mit Formatter
+                        TextField("30",
+                                  value: $timerViewModel.workPhaseDuration,
+                                  formatter: Self.secondsFormatter)
+                        .keyboardType(.decimalPad)
+                        .multilineTextAlignment(.trailing)
+                        .frame(maxWidth: 120)
+                    }
                 }
                 
-                // Laden + direkt starten
-                Button {
-                    timerViewModel.setTrainingTapped()
-                    timerViewModel.startTimer()             // sofort starten
-                    homeViewModel.activeTab = .timer
-                } label: {
-                    Label("Jetzt starten", systemImage: "play.circle.fill")
+                // Pausenphase
+                Section(header: Text("Rest-Phase-Duration")) {
+                    HStack {
+                        Text("Sekunden")
+                        Spacer()
+                        TextField("10",
+                                  value: $timerViewModel.restPhaseDuration,
+                                  formatter: Self.secondsFormatter)
+                        .keyboardType(.decimalPad)
+                        .multilineTextAlignment(.trailing)
+                        .frame(maxWidth: 120)
+                    }
                 }
-                .tint(.green)
+                
+                // Pausenphase
+                Section(header: Text("Rounds-Count")) {
+                    HStack {
+                        Text("Runden")
+                        Spacer()
+                        TextField("10",
+                                  value: $timerViewModel.roundCount,
+                                  formatter: Self.secondsFormatter)
+                        .keyboardType(.decimalPad)
+                        .multilineTextAlignment(.trailing)
+                        .frame(maxWidth: 120)
+                    }
+                }
+                
+                Section {
+                    Button {
+                        timerViewModel.setTrainingTapped() // Setzt remaining = duration
+                        homeViewModel.activeTab = .timer
+                    } label: {
+                        Label("Speichern und zum Timer", systemImage: "tray.and.arrow.down.fill")
+                    }
+                    
+                    // Laden + direkt starten
+                    Button {
+                        timerViewModel.setTrainingTapped()
+                        timerViewModel.startTimer()             // sofort starten
+                        homeViewModel.activeTab = .timer
+                    } label: {
+                        Label("Jetzt starten", systemImage: "play.circle.fill")
+                    }
+                    .tint(.green)
+                }
             }
+            AdBannerView(
+                adUnitID: "ca-app-pub-3940256099942544/2435281174", // Test-ID
+                bannerType: .largeBanner
+            )
+            .frame(height: BannerType.largeBanner.height)
+            .padding(.bottom, 24)
         }
     }
 }
