@@ -39,6 +39,7 @@ struct TrainingListView: View {
                                         // Training direkt im Timer starten
                                         timerViewModel.load(session: session)
                                         homeViewModel.activeTab = .timer
+                                        timerViewModel.activeTrainingSession = session
                                     } label: {
                                         Image(systemName: "play.circle.fill")
                                             .font(.system(size: 28))

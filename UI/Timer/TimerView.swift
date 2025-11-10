@@ -11,9 +11,11 @@ struct TimerView: View {
             VStack(spacing: 20) {
                 // Übungs-Header
                 VStack(spacing: 4) {
-                    
-                    
-                    
+                    if let activeTrainingSession = viewModel.activeTrainingSession {
+                        Text(activeTrainingSession.title)
+                            .font(.title).bold()
+                            .lineLimit(1)
+                    }
                     Text(viewModel.currentExerciseName)
                         .font(.title2).bold()
                         .lineLimit(1)

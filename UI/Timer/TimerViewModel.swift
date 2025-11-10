@@ -23,6 +23,7 @@ class TimerViewModel: ObservableObject {
     // Mehrere Übungen
     @Published private(set) var exercises: [PlainExercise] = []
     @Published private(set) var currentExerciseIndex: Int = 0
+    @Published var activeTrainingSession: TrainingSessionObject? 
     
     // Fertig-Flag
     @Published var isFinished: Bool = false
