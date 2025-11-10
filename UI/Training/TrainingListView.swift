@@ -39,6 +39,7 @@ struct TrainingListView: View {
                                         // Training direkt im Timer starten
                                         timerViewModel.load(session: session)
                                         homeViewModel.activeTab = .timer
+                                        timerViewModel.activeTrainingSession = session
                                     } label: {
                                         Image(systemName: "play.circle.fill")
                                             .font(.system(size: 28))
@@ -72,7 +73,7 @@ struct TrainingListView: View {
                         bannerType: .largeBanner
                     )
                     .frame(height: BannerType.largeBanner.height)
-                    .padding(.bottom, 24)
+                    .padding(.bottom, 16)
                 }
             }
             .navigationTitle("Trainings")
@@ -96,15 +97,17 @@ struct TrainingListView: View {
     }
     
     private func delete(session: TrainingSessionObject) {
-        guard let realm = session.realm else { return }
+        // session kann frozen sein → erst thawen
+        guard let thawed = session.thaw(), let realm = thawed.realm else { return }
         try? realm.write {
-            realm.delete(session)
+            realm.delete(thawed)
         }
     }
+
 }
 
 private struct SessionRow: View {
-    let session: TrainingSessionObject
+    @ObservedRealmObject var session: TrainingSessionObject
     
     var body: some View {
         HStack(spacing: 12) {

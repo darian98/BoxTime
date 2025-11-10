@@ -91,7 +91,7 @@ struct QuickStartView: View {
                     bannerType: .largeBanner
                 )
                 .frame(height: BannerType.largeBanner.height)
-                .padding(.bottom, 24)
+                .padding(.bottom, 16)
             }
             
         }

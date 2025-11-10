@@ -23,6 +23,7 @@ class TimerViewModel: ObservableObject {
     // Mehrere Übungen
     @Published private(set) var exercises: [PlainExercise] = []
     @Published private(set) var currentExerciseIndex: Int = 0
+    @Published var activeTrainingSession: TrainingSessionObject?
     
     // Fertig-Flag
     @Published var isFinished: Bool = false
@@ -33,6 +34,15 @@ class TimerViewModel: ObservableObject {
     // MARK: - Abgeleitete Werte
     var backgroundColor: Color {
         activePhase == .work ? .green : .red
+    }
+    
+    var hasActiveSession: Bool {
+        activeTrainingSession != nil && !exercises.isEmpty
+    }
+    
+    var sessionExerciseProgress: Double {
+        guard exercises.count > 0 else { return 0 }
+        return Double(currentExerciseIndex) / Double(exercises.count)
     }
     
     var currentExercise: PlainExercise? {
@@ -67,6 +77,34 @@ class TimerViewModel: ObservableObject {
     
     var hasPreviousExercise: Bool {
         currentExerciseIndex > 0
+    }
+    
+    // Dauer der aktuellen Phase (Work oder Rest)
+    private var currentPhaseTotalDuration: Int {
+        switch activePhase {
+        case .work:
+            return workPhaseDuration
+        case .rest:
+            return restPhaseDuration
+        }
+    }
+    
+    /// Fortschritt der **aktuellen Phase** in [0, 1]
+    /// 0.0 = Phase startet, 1.0 = Phase endet
+    var currentPhaseProgress: Double {
+        guard currentExercise != nil else { return 0 }
+        // Keine Runde aktiv -> kein Progress
+        guard currentRound > 0 else { return 0 }
+        // Verhindert Division durch 0
+        let total = currentPhaseTotalDuration
+        guard total > 0 else { return 0 }
+        
+        // remainingSec zählt runter -> elapsed = total - remaining
+        let elapsed = total - remainingSec
+        let clampedElapsed = max(0, min(elapsed, total))
+        
+        let progress = Double(clampedElapsed) / Double(total)
+        return min(max(progress, 0.0), 1.0)
     }
     
     // MARK: - Laden von Trainings / Übungen
@@ -107,7 +145,7 @@ class TimerViewModel: ObservableObject {
         
         isRunning = true
         
-        SoundPlayer.shared.playSound(named: "openingBell", ext: "mp3")
+        SoundPlayer.shared.playSound(named: "openingBell", ext: "mp3") // TODO: 10 Sekunden vor Ende der Phase einen Sound abspielen
         bangHaptic()
         
         timer = Timer.publish(every: 1, on: .main, in: .common)

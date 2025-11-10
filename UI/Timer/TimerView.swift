@@ -1,22 +1,30 @@
-// TimerView.swift
 import SwiftUI
 
 struct TimerView: View {
     @ObservedObject var viewModel: TimerViewModel
     
+    private let ringSize: CGFloat = 320        // Größerer Ring
+    private let ringLineWidth: CGFloat = 22    // Etwas dicker für Premium-Look
+    
     var body: some View {
         ZStack {
-            viewModel.backgroundColor.ignoresSafeArea()
+            viewModel.backgroundColor
+                .ignoresSafeArea(edges: .all)
             
-            VStack(spacing: 20) {
+            VStack(spacing: 24) {
                 // Übungs-Header
                 VStack(spacing: 4) {
-                    
-                    
-                    
+                    if let activeTrainingSession = viewModel.activeTrainingSession {
+                        Text(activeTrainingSession.title)
+                            .font(.title2.bold())
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                    }
                     Text(viewModel.currentExerciseName)
-                        .font(.title2).bold()
+                        .font(.title3.bold())
                         .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                    
                     if let ex = viewModel.currentExercise {
                         Text("\(viewModel.currentExerciseIndex + 1)/\(viewModel.exercises.count) · \(ex.rounds)x")
                             .font(.subheadline)
@@ -31,65 +39,119 @@ struct TimerView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+                .multilineTextAlignment(.center)
+                .padding(.top, 8)
                 
-                // Phase & Runde
-                Text(viewModel.currentPhaseText)
-                    .font(.system(size: 24, weight: .bold, design: .monospaced))
-                Text(viewModel.currentRoundText)
-                    .font(.system(size: 20, weight: .medium, design: .monospaced))
+                // === PROGRESS-RING FÜR AKTUELLE PHASE (Work / Rest) ===
+                ZStack {
+                    // Hintergrundring
+                    Circle()
+                        .stroke(
+                            Color.white.opacity(0.12),
+                            style: StrokeStyle(lineWidth: ringLineWidth)
+                        )
+                        .shadow(radius: 6)
+                    
+                    // Fortschrittsring (smooth animiert über remainingSec)
+                    Circle()
+                        .trim(from: 0, to: CGFloat(viewModel.currentPhaseProgress))
+                        .stroke(
+                            AngularGradient(
+                                gradient: Gradient(colors: [
+                                    Color.white.opacity(0.95),
+                                    Color.white.opacity(0.6),
+                                    Color.white.opacity(0.95)
+                                ]),
+                                center: .center
+                            ),
+                            style: StrokeStyle(lineWidth: ringLineWidth, lineCap: .round)
+                        )
+                        .rotationEffect(.degrees(-90)) // Start oben
+                        .animation(.linear(duration: 0.95), value: viewModel.remainingSec)
+                    
+                    // Inhalte im Kreis: Phase, Runde, Restzeit
+                    VStack(spacing: 10) {
+                        Text(viewModel.currentPhaseText)
+                            .font(.system(size: 18, weight: .bold, design: .monospaced))
+                            .textCase(.uppercase)
+                            .foregroundColor(.white.opacity(0.9))
+                        
+                        Text(viewModel.currentRoundText)
+                            .font(.system(size: 16, weight: .medium, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.8))
+                        
+                        Text("\(viewModel.formattedRemaining) s")
+                            .font(.system(size: 54, weight: .bold, design: .monospaced))
+                            .foregroundColor(.white)
+                    }
+                }
+                .frame(width: ringSize, height: ringSize)
+                .padding(.vertical, 4)
                 
-                // Restzeit
-                Text("\(viewModel.formattedRemaining) s")
-                    .font(.system(size: 48, weight: .bold, design: .monospaced))
-                
+                Spacer()
                 // Steuerung
-                HStack(spacing: 12) {
-                    Button {
-                        viewModel.backToPreviousExercise()
-                    } label: {
-                        Label("Zurück", systemImage: "backward.end.fill")
-                            .font(.title3)
-                            .padding()
-                            .background(Color.black.opacity(0.15))
-                            .cornerRadius(12)
+                VStack(spacing: 10) {
+                    HStack(spacing: 10) {
+                        Button {
+                            viewModel.backToPreviousExercise()
+                        } label: {
+                            Label("Zurück", systemImage: "backward.end.fill")
+                                .font(.subheadline)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 10)
+                                .padding(.horizontal, 8)
+                                .background(Color.black.opacity(0.18))
+                                .cornerRadius(12)
+                        }
+                        .disabled(!viewModel.hasPreviousExercise || viewModel.isRunning)
+                        .opacity((!viewModel.hasPreviousExercise || viewModel.isRunning) ? 0.5 : 1)
+                        
+                        Button {
+                            viewModel.isRunning ? viewModel.pause() : viewModel.startTimer()
+                        } label: {
+                            Label(viewModel.isRunning ? "Pause" : "Start",
+                                  systemImage: viewModel.isRunning ? "pause.fill" : "play.fill")
+                                .font(.headline)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .padding(.horizontal, 8)
+                                .background(
+                                    (viewModel.isRunning ? Color.red : Color.green)
+                                        .opacity(0.28)
+                                )
+                                .cornerRadius(16)
+                                .shadow(radius: 4, y: 2)
+                        }
+                        
+                        Button {
+                            viewModel.skipToNextExercise()
+                        } label: {
+                            Label("Weiter", systemImage: "forward.end.fill")
+                                .font(.subheadline)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 10)
+                                .padding(.horizontal, 8)
+                                .background(Color.black.opacity(0.18))
+                                .cornerRadius(12)
+                        }
+                        .disabled(!viewModel.hasNextExercise || viewModel.isRunning)
+                        .opacity((!viewModel.hasNextExercise || viewModel.isRunning) ? 0.5 : 1)
                     }
-                    .disabled(!viewModel.hasPreviousExercise || viewModel.isRunning)
                     
+                    // Reset unten etwas dezenter
                     Button {
-                        viewModel.isRunning ? viewModel.pause() : viewModel.startTimer()
+                        viewModel.reset()
                     } label: {
-                        Label(viewModel.isRunning ? "Stop" : "Start",
-                              systemImage: viewModel.isRunning ? "pause.fill" : "play.fill")
-                            .font(.title2)
-                            .padding()
-                            .background(viewModel.isRunning ? Color.red.opacity(0.25) : Color.green.opacity(0.25))
+                        Label("Reset", systemImage: "arrow.counterclockwise")
+                            .font(.subheadline)
+                            .padding(.horizontal, 18)
+                            .padding(.vertical, 8)
+                            .background(Color.gray.opacity(0.25))
                             .cornerRadius(12)
                     }
-                    
-                    Button {
-                        viewModel.skipToNextExercise()
-                    } label: {
-                        Label("Weiter", systemImage: "forward.end.fill")
-                            .font(.title3)
-                            .padding()
-                            .background(Color.black.opacity(0.15))
-                            .cornerRadius(12)
-                    }
-                    .disabled(!viewModel.hasNextExercise || viewModel.isRunning)
+                    .padding(.top, 2)
                 }
-                
-                // Reset
-                Button {
-                    viewModel.reset()
-                } label: {
-                    Label("Reset", systemImage: "arrow.counterclockwise")
-                        .font(.title3)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(12)
-                }
-                .padding(.top, 6)
+                .padding(.horizontal, 4)
                 
                 Spacer()
                 
@@ -100,9 +162,10 @@ struct TimerView: View {
                     )
                     .frame(height: BannerType.banner.height)
                 }
-                
             }
-            .padding()
+            .padding(.top, 24)
+            .padding(.horizontal)
+            .padding(.bottom)
         }
     }
 }
