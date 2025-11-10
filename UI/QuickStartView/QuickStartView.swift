@@ -84,12 +84,16 @@ struct QuickStartView: View {
                     .tint(.green)
                 }
             }
-            AdBannerView(
-                adUnitID: "ca-app-pub-3940256099942544/2435281174", // Test-ID
-                bannerType: .largeBanner
-            )
-            .frame(height: BannerType.largeBanner.height)
-            .padding(.bottom, 24)
+            
+            if !PremiumManager.shared.hasPremium {
+                AdBannerView(
+                    adUnitID: "ca-app-pub-3940256099942544/2435281174", // Test-ID
+                    bannerType: .largeBanner
+                )
+                .frame(height: BannerType.largeBanner.height)
+                .padding(.bottom, 24)
+            }
+            
         }
     }
 }

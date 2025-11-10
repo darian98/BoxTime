@@ -65,14 +65,15 @@ struct TrainingListView: View {
                         .listStyle(.insetGrouped)
                     }
                 }
-                // Beispiel: größere Banner nur für Nicht-Premium-Nutzer
-                AdBannerView(
-                    adUnitID: "ca-app-pub-3940256099942544/2435281174", // Test-ID
-                    bannerType: .largeBanner
-                )
-                .frame(height: BannerType.largeBanner.height)
-                .padding(.bottom, 24)
-
+                if !PremiumManager.shared.hasPremium {
+                    // Beispiel: größere Banner nur für Nicht-Premium-Nutzer
+                    AdBannerView(
+                        adUnitID: "ca-app-pub-3940256099942544/2435281174", // Test-ID
+                        bannerType: .largeBanner
+                    )
+                    .frame(height: BannerType.largeBanner.height)
+                    .padding(.bottom, 24)
+                }
             }
             .navigationTitle("Trainings")
             .toolbar {
