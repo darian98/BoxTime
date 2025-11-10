@@ -6,7 +6,7 @@ struct TimerView: View {
     
     var body: some View {
         ZStack {
-            viewModel.backgroundColor.ignoresSafeArea()
+            viewModel.backgroundColor.ignoresSafeArea(edges: .all)
             
             VStack(spacing: 20) {
                 // Übungs-Header
