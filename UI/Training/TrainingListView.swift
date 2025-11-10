@@ -97,15 +97,17 @@ struct TrainingListView: View {
     }
     
     private func delete(session: TrainingSessionObject) {
-        guard let realm = session.realm else { return }
+        // session kann frozen sein → erst thawen
+        guard let thawed = session.thaw(), let realm = thawed.realm else { return }
         try? realm.write {
-            realm.delete(session)
+            realm.delete(thawed)
         }
     }
+
 }
 
 private struct SessionRow: View {
-    let session: TrainingSessionObject
+    @ObservedRealmObject var session: TrainingSessionObject
     
     var body: some View {
         HStack(spacing: 12) {

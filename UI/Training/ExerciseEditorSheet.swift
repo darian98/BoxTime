@@ -47,7 +47,7 @@ struct ExerciseEditorSheet: View {
                             .multilineTextAlignment(.trailing)
                             .frame(width: 60)
                         
-                        Stepper("", value: $rounds, in: 1...99, step: 5)
+                        Stepper("", value: $rounds, in: 1...99, step: 1)
                             .labelsHidden()
                     }
                     
@@ -113,6 +113,8 @@ struct ExerciseEditorSheet: View {
             }
         }
     }
+    
+    
     
     private var totalText: String {
         let sec = (work + rest) * max(0, rounds)
