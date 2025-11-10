@@ -12,7 +12,8 @@ import StoreKit
 struct TrainingHistoryView: View {
     @StateObject private var purchaseManager = PurchaseManager.shared
     @StateObject private var premiumManager = PremiumManager.shared
-
+    @State private var showPremiumView: Bool = false
+    
     var body: some View {
         VStack(spacing: 20) {
             if premiumManager.hasPremium {
@@ -26,40 +27,20 @@ struct TrainingHistoryView: View {
                 Text("Historie nur für Premium-User verfügbar!")
                     .font(.headline)
                     .multilineTextAlignment(.center)
-
-                if let error = purchaseManager.errorMessage {
-                    Text(error)
-                        .foregroundColor(.red)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
-                }
                 
-                if let three = purchaseManager.threeMonthsProduct {
-                    Button {
-                        Task { await purchaseManager.buyThreeMonths() }
-                    } label: {
-                        buttonLabel(title: "3 Monate Premium", price: three.displayPrice)
-                    }
-                }
-                
-                if let six = purchaseManager.sixMonthsProduct {
-                    Button {
-                        Task { await purchaseManager.buySixMonths() }
-                    } label: {
-                        buttonLabel(title: "6 Monate Premium", price: six.displayPrice)
-                    }
+                Button {
+                    showPremiumView.toggle()
+                } label: {
+                    Text("Die Vorteile von Premium anschauen!")
                 }
 
-                if let year = purchaseManager.oneYearProduct {
-                    Button {
-                        Task { await purchaseManager.buyOneYear() }
-                    } label: {
-                        buttonLabel(title: "1 Jahr Premium", price: year.displayPrice)
-                    }
-                }
+                
             }
         }
         .padding()
+        .fullScreenCover(isPresented: $showPremiumView) {
+            PremiumView()
+        }
     }
 
     private func buttonLabel(title: String, price: String) -> some View {
