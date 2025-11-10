@@ -54,52 +54,62 @@ struct TrainingEditorView: View {
     
     var body: some View {
         NavigationStack {
-            Form {
-                Section("Allgemein") {
-                    TextField("Titel", text: $title)
-                        .textInputAutocapitalization(.words)
-                    DatePicker("Datum", selection: $date, displayedComponents: [.date, .hourAndMinute])
-                }
-                
-                Section {
-                    if exercises.isEmpty {
-                        ContentUnavailableView(
-                            "Noch keine Übungen",
-                            systemImage: "dumbbell",
-                            description: Text("Füge unten eine Übung hinzu.")
-                        )
-                    } else {
-                        ForEach(Array(exercises.enumerated()), id: \.offset) { index, ex in
-                            Button {
-                                sheetMode = .edit(index: index)
-                            } label: {
-                                ExerciseRow(ex: ex)
-                            }
-                            .swipeActions {
-                                Button(role: .destructive) {
-                                    removeExercise(at: index)
+            VStack {
+                Form {
+                    Section("Allgemein") {
+                        TextField("Titel", text: $title)
+                            .textInputAutocapitalization(.words)
+                        DatePicker("Datum", selection: $date, displayedComponents: [.date, .hourAndMinute])
+                    }
+                    
+                    Section {
+                        if exercises.isEmpty {
+                            ContentUnavailableView(
+                                "Noch keine Übungen",
+                                systemImage: "dumbbell",
+                                description: Text("Füge unten eine Übung hinzu.")
+                            )
+                        } else {
+                            ForEach(Array(exercises.enumerated()), id: \.offset) { index, ex in
+                                Button {
+                                    sheetMode = .edit(index: index)
                                 } label: {
-                                    Label("Löschen", systemImage: "trash")
+                                    ExerciseRow(ex: ex)
+                                }
+                                .swipeActions {
+                                    Button(role: .destructive) {
+                                        removeExercise(at: index)
+                                    } label: {
+                                        Label("Löschen", systemImage: "trash")
+                                    }
                                 }
                             }
                         }
+                        
+                        Button {
+                            sheetMode = .new
+                        } label: {
+                            Label("Übung hinzufügen", systemImage: "plus.circle.fill")
+                        }
+                    } header: {
+                        Text("Übungen")
+                    } footer: {
+                        HStack {
+                            Label("Gesamtzeit: \(totalTimeText)", systemImage: "clock")
+                            Spacer()
+                            Label("\(exercises.count) Üb.", systemImage: "list.bullet")
+                        }
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
                     }
-                    
-                    Button {
-                        sheetMode = .new
-                    } label: {
-                        Label("Übung hinzufügen", systemImage: "plus.circle.fill")
-                    }
-                } header: {
-                    Text("Übungen")
-                } footer: {
-                    HStack {
-                        Label("Gesamtzeit: \(totalTimeText)", systemImage: "clock")
-                        Spacer()
-                        Label("\(exercises.count) Üb.", systemImage: "list.bullet")
-                    }
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                }
+                if !PremiumManager.shared.hasPremium {
+                    AdBannerView(
+                        adUnitID: "ca-app-pub-3940256099942544/2435281174",
+                        bannerType: .largeBanner
+                    )
+                    .frame(height: BannerType.largeBanner.height)
+                    .padding(.bottom, 16)
                 }
             }
             .navigationTitle(originalSession == nil ? "Training erstellen" : "Training bearbeiten")

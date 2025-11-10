@@ -1,9 +1,3 @@
-//
-//  TrainingListView.swift
-//  BoxTime
-//
-//  Created by Darian Hanci on 07.11.25.
-//
 import SwiftUI
 import RealmSwift
 
@@ -11,12 +5,11 @@ struct TrainingListView: View {
     @ObservedResults(TrainingSessionObject.self, sortDescriptor: SortDescriptor(keyPath: "date", ascending: false))
     var sessions
     
-    // Timer- und HomeViewModel als Dependency Injection
     @ObservedObject var timerViewModel: TimerViewModel
     @ObservedObject var homeViewModel: HomeViewModel
     
     @State private var showingNewEditor = false
-    @State private var editingSession: TrainingSessionObject?   // <- NEU
+    @State private var editingSession: TrainingSessionObject?
     
     var body: some View {
         NavigationStack {
@@ -31,29 +24,41 @@ struct TrainingListView: View {
                     } else {
                         List {
                             ForEach(sessions) { session in
-                                HStack {
+                                HStack(spacing: 10) {
                                     SessionRow(session: session)
-                                    Spacer()
-                                    
+
+                                    Spacer(minLength: 12)
+
                                     Button {
-                                        // Training direkt im Timer starten
                                         timerViewModel.load(session: session)
                                         homeViewModel.activeTab = .timer
                                         timerViewModel.activeTrainingSession = session
                                     } label: {
-                                        Image(systemName: "play.circle.fill")
-                                            .font(.system(size: 28))
-                                            .foregroundStyle(.green)
-                                            .padding(.horizontal, 6)
+                                        Image(systemName: "play.fill")
+                                            .font(.system(size: 18, weight: .bold))
+                                            .padding(10)
+                                            .background(
+                                                Circle()
+                                                    .fill(Color.green.opacity(0.2))
+                                            )
                                     }
                                     .buttonStyle(.plain)
+                                    .foregroundStyle(.green)
                                     .accessibilityLabel("Training starten")
                                 }
-                                .contentShape(Rectangle())                // <- NEU (macht ganze Row tappbar)
+                                .padding(.vertical, 16)
+                                .padding(.horizontal, 8) // <= weniger horizontaler Rand
+                                .background(
+                                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                        .fill(Color(.secondarySystemBackground))
+                                        .shadow(color: .black.opacity(0.06), radius: 4, x: 0, y: 2)
+                                )
+                                .contentShape(Rectangle())
                                 .onTapGesture {
-                                    print("Tapped")
                                     editingSession = session
-                                } // <- NEU (Sheet öffnen)
+                                }
+                                .listRowInsets(EdgeInsets(top: 6, leading: 4, bottom: 6, trailing: 4)) // <= dichter am Bildschirmrand
+                                .listRowSeparator(.hidden)
                                 .swipeActions(edge: .trailing) {
                                     Button(role: .destructive) {
                                         delete(session: session)
@@ -62,14 +67,17 @@ struct TrainingListView: View {
                                     }
                                 }
                             }
+
                         }
-                        .listStyle(.insetGrouped)
+                        .listStyle(.plain)
+                        .scrollContentBackground(.hidden) // damit der Hintergrund durchscheint
+                        .background(Color(.systemGroupedBackground))
                     }
                 }
+                
                 if !PremiumManager.shared.hasPremium {
-                    // Beispiel: größere Banner nur für Nicht-Premium-Nutzer
                     AdBannerView(
-                        adUnitID: "ca-app-pub-3940256099942544/2435281174", // Test-ID
+                        adUnitID: "ca-app-pub-3940256099942544/2435281174",
                         bannerType: .largeBanner
                     )
                     .frame(height: BannerType.largeBanner.height)
@@ -97,13 +105,11 @@ struct TrainingListView: View {
     }
     
     private func delete(session: TrainingSessionObject) {
-        // session kann frozen sein → erst thawen
         guard let thawed = session.thaw(), let realm = thawed.realm else { return }
         try? realm.write {
             realm.delete(thawed)
         }
     }
-
 }
 
 private struct SessionRow: View {
@@ -111,24 +117,42 @@ private struct SessionRow: View {
     
     var body: some View {
         HStack(spacing: 12) {
+            // Icon-Box
             ZStack {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .fill(Color.accentColor.opacity(0.15))
-                    .frame(width: 52, height: 52)
+                    .frame(width: 56, height: 56)
+                
                 Image(systemName: "figure.boxing")
-                    .font(.system(size: 22, weight: .semibold))
-                    .foregroundStyle(.secondary)
+                    .font(.system(size: 24, weight: .semibold))
+                    .foregroundStyle(.gray)
             }
-            VStack(alignment: .leading, spacing: 4) {
+            
+            // Texte
+            VStack(alignment: .leading, spacing: 6) {
                 Text(session.title)
                     .font(.headline)
-                HStack(spacing: 8) {
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                
+                HStack(spacing: 16) {
                     Label(session.exerciseCountText, systemImage: "list.bullet")
                     Label(session.totalTimeText, systemImage: "clock")
                 }
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+                .labelStyle(TightLabelStyle())
             }
         }
     }
 }
+
+struct TightLabelStyle: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack(spacing: 4) {          // hier stellst du den Abstand ein
+            configuration.icon
+            configuration.title
+        }
+    }
+}
+
