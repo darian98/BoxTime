@@ -40,7 +40,7 @@ struct TimerView: View {
                     }
                 }
                 .multilineTextAlignment(.center)
-                .padding(.top, 8)
+                .padding(.top, 24)
                 
                 // === PROGRESS-RING FÜR AKTUELLE PHASE (Work / Rest) ===
                 ZStack {
@@ -161,9 +161,9 @@ struct TimerView: View {
                         bannerType: .banner
                     )
                     .frame(height: BannerType.banner.height)
+                    .padding(.bottom, LayoutHelper.adBottomPadding())
                 }
             }
-            .padding(.top, 24)
             .padding(.horizontal)
             .padding(.bottom)
         }
