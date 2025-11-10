@@ -21,11 +21,15 @@ struct HomeView: View {
                 
                 QuickStartView(timerViewModel: timerViewModel, homeViewModel: viewModel)
                     .tabItem { Label("Schnellstart", systemImage: "bolt.fill") }
-                    .tag(AppTab.tab2)
+                    .tag(AppTab.quickStart)
                 
                 TrainingListView(timerViewModel: timerViewModel, homeViewModel: viewModel)
-                    .tabItem { Label("TrainingSessions", systemImage: "list.bullet.rectangle") }
-                    .tag(AppTab.tab3)
+                    .tabItem { Label("TrainingSessions", systemImage: "list.bullet.clipboard") }
+                    .tag(AppTab.trainingSessions)
+                
+                TrainingHistoryView()
+                    .tabItem { Label("Historie", systemImage: "list.bullet.rectangle") }
+                    .tag(AppTab.history)
                 
             }
             

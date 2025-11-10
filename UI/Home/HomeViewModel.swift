@@ -8,7 +8,7 @@ import SwiftUI
 import Combine
 
 enum AppTab: Hashable {
-    case timer, tab2, tab3
+    case timer, quickStart, trainingSessions, history
 }
 
 class HomeViewModel: ObservableObject {
