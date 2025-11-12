@@ -17,7 +17,6 @@ struct PremiumView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    
                     // Header
                     VStack(alignment: .leading, spacing: 8) {
                         Text("BoxTime Premium")
