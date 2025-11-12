@@ -338,6 +338,7 @@ struct QuickStartView: View {
                     }
                     .padding(.horizontal)
                     .padding(.bottom, 6)
+                    .padding(.vertical, 8)
                     
                 }
                 .background(.ultraThinMaterial)
