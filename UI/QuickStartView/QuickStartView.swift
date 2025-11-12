@@ -95,7 +95,7 @@ struct QuickStartView: View {
                     
                     // HEADER
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Quick Start")
+                        Text("Schnell-Start")
                             .font(.largeTitle.bold())
                         Text("Stelle dir dein Intervall-Training in wenigen Sekunden zusammen.")
                             .font(.subheadline)
@@ -216,12 +216,15 @@ struct QuickStartView: View {
                     // GESAMTDAUER
                     SettingCard {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Gesamtdauer")
-                                .font(.headline)
-                            
-                            Text(formattedTotalDuration(totalTrainingSeconds))
-                                .font(.title2.monospacedDigit())
-                                .fontWeight(.bold)
+                            HStack {
+                                Text("Gesamtdauer")
+                                    .font(.headline)
+                                Spacer()
+                                
+                                Text(formattedTotalDuration(totalTrainingSeconds))
+                                    .font(.title2.monospacedDigit())
+                                    .fontWeight(.bold)
+                            }
                             
                             Text("Basierend auf \(timerViewModel.roundCount) Runden · \(formattedDuration(timerViewModel.workPhaseDuration)) Work + \(formattedDuration(timerViewModel.restPhaseDuration)) Rest pro Runde.")
                                 .font(.caption)

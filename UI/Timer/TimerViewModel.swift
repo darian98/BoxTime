@@ -31,8 +31,31 @@ class TimerViewModel: ObservableObject {
     // Fertig-Flag
     @Published var isFinished: Bool = false
     
+    
     // MARK: - Intern
     private var timer: AnyCancellable?
+    private let activeRepo: ActiveStateRepository
+    
+    // DI: für Tests kannst du ein Mock-Repo übergeben
+    init(activeRepo: ActiveStateRepository = RealmActiveStateRepository()) {
+        self.activeRepo = activeRepo
+        restoreActiveIfAvailable()
+    }
+    
+    // MARK: - Restore
+    private func restoreActiveIfAvailable() {
+        switch activeRepo.loadActive() {
+        case .session(let id):
+            // Session aus Realm holen und laden
+            if let session = try? Realm().object(ofType: TrainingSessionObject.self, forPrimaryKey: id) {
+                load(session: session)
+            }
+        case .exercise(let ex):
+            load(exercise: ex)
+        case .none:
+            break
+        }
+    }
     
     // MARK: - Abgeleitete Werte
     var backgroundColor: Color {
@@ -113,21 +136,26 @@ class TimerViewModel: ObservableObject {
     // MARK: - Laden von Trainings / Übungen
     /// Komplettes Training aus Realm übernehmen
     func load(session: TrainingSessionObject) {
+        activeTrainingSession = session
         let mapped: [PlainExercise] = session.exercises.map {
             PlainExercise(name: $0.name,
                           rounds: $0.rounds,
                           workPhaseDuration: $0.workPhaseDuration,
                           restPhaseDuration: $0.restPhaseDuration)
         }
-        load(exercises: mapped)
+        exercises = mapped
+        currentExerciseIndex = 0
+        configureForCurrentExercise(resetRounds: true)
+        //load(exercises: mapped)
     }
     
     /// Direkte Übergabe einer Übungsliste (z. B. für Tests)
-    func load(exercises: [PlainExercise]) {
+    func load(exercise: PlainExercise) {
         pause()
         isFinished = false
-        self.exercises = exercises
-        self.currentExerciseIndex = 0
+        activeTrainingSession = nil
+        exercises = [exercise]
+        currentExerciseIndex = 0
         configureForCurrentExercise(resetRounds: true)
     }
     
@@ -145,6 +173,8 @@ class TimerViewModel: ObservableObject {
         if currentRound == 0 && remainingRounds > 0 && activePhase == .work {
             currentRound = 1
         }
+        
+        saveActiveState()
         
         isRunning = true
         
@@ -166,6 +196,19 @@ class TimerViewModel: ObservableObject {
                     self.handlePhaseSwitch()
                 }
             }
+    }
+    
+    // Persistieren des aktiven Zustands
+    func saveActiveState() {
+        do {
+            if let s = activeTrainingSession {
+                try activeRepo.saveActive(sessionId: s.id)
+            } else if let one = currentExercise {
+                try activeRepo.saveActive(exercise: one)
+            }
+        } catch {
+            print("Active speichern fehlgeschlagen: \(error)")
+        }
     }
     
     func pause() {
@@ -207,7 +250,7 @@ class TimerViewModel: ObservableObject {
                                      rounds: roundCount,
                                      workPhaseDuration: workPhaseDuration,
                                      restPhaseDuration: restPhaseDuration)
-        load(exercises: [exercise])
+        load(exercise: exercise)
         return true
     }
     

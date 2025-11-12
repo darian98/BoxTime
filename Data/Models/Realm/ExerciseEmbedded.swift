@@ -46,3 +46,9 @@ struct PlainExercise: Identifiable, Hashable {
     var workPhaseDuration: Int
     var restPhaseDuration: Int
 }
+
+class ActiveExerciseOrSessionObject: Object {
+    @Persisted(primaryKey: true) var id: String = "active"
+    @Persisted var trainingSessionId: ObjectId?
+    @Persisted var activeExercise: ExerciseEmbedded?     // <- genau EINE Exercise
+}

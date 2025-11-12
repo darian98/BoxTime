@@ -50,7 +50,7 @@ struct TrainingListView: View {
                                     Button {
                                         timerViewModel.load(session: session)
                                         homeViewModel.activeTab = .timer
-                                        timerViewModel.activeTrainingSession = session
+                                        timerViewModel.saveActiveState()
                                     } label: {
                                         Image(systemName: "play.fill")
                                             .font(.system(size: 18, weight: .bold))
