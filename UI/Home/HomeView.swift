@@ -13,7 +13,6 @@ struct HomeView: View {
     
     var body: some View {
         VStack {
-            
             TabView(selection: $viewModel.activeTab) {
                 TimerView(viewModel: timerViewModel)
                     .tabItem { Label("Timer", systemImage: "clock") }
@@ -30,11 +29,9 @@ struct HomeView: View {
                 TrainingHistoryView()
                     .tabItem { Label("Historie", systemImage: "list.bullet.rectangle") }
                     .tag(AppTab.history)
-                
+        
             }
-            
         }
-        .padding()
     }
 }
 

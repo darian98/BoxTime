@@ -11,6 +11,24 @@ struct TrainingListView: View {
     @State private var showingNewEditor = false
     @State private var editingSession: TrainingSessionObject?
     
+    @Environment(\.colorScheme) private var colorScheme
+    
+    private var rowBackgroundColor: Color {
+        if colorScheme == .dark {
+            return Color(UIColor.systemGray5)   // minimal heller
+        } else {
+            return Color(UIColor.secondarySystemBackground)
+        }
+    }
+
+    private var listBackgroundColor: Color {
+        if colorScheme == .dark {
+            return Color(UIColor.systemGray6)   // nur ein Tick dunkler
+        } else {
+            return Color(UIColor.systemGroupedBackground)
+        }
+    }
+
     var body: some View {
         NavigationStack {
             VStack {
@@ -26,9 +44,9 @@ struct TrainingListView: View {
                             ForEach(sessions) { session in
                                 HStack(spacing: 10) {
                                     SessionRow(session: session)
-
+                                    
                                     Spacer(minLength: 12)
-
+                                    
                                     Button {
                                         timerViewModel.load(session: session)
                                         homeViewModel.activeTab = .timer
@@ -50,15 +68,16 @@ struct TrainingListView: View {
                                 .padding(.horizontal, 8) // <= weniger horizontaler Rand
                                 .background(
                                     RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                        .fill(Color(.secondarySystemBackground))
+                                        .fill(rowBackgroundColor)
                                         .shadow(color: .black.opacity(0.06), radius: 4, x: 0, y: 2)
                                 )
                                 .contentShape(Rectangle())
                                 .onTapGesture {
                                     editingSession = session
                                 }
-                                .listRowInsets(EdgeInsets(top: 6, leading: 4, bottom: 6, trailing: 4)) // <= dichter am Bildschirmrand
+                                .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8)) // <= dichter am Bildschirmrand
                                 .listRowSeparator(.hidden)
+                                .listRowBackground(Color.clear)
                                 .swipeActions(edge: .trailing) {
                                     Button(role: .destructive) {
                                         delete(session: session)
@@ -67,11 +86,12 @@ struct TrainingListView: View {
                                     }
                                 }
                             }
-
+                            
                         }
-                        .listStyle(.plain)
+                        .listStyle(.automatic)
                         .scrollContentBackground(.hidden) // damit der Hintergrund durchscheint
-                        .background(Color(.systemGroupedBackground))
+                     //   .background(listBackgroundColor)
+                     
                     }
                 }
                 
