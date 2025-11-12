@@ -233,8 +233,10 @@ struct QuickStartView: View {
                     // Aktion-Buttons
                     VStack(spacing: 12) {
                         Button {
-                            timerViewModel.setTrainingTapped()
-                            homeViewModel.activeTab = .timer
+                            let success = timerViewModel.setTrainingTapped()
+                            if success {
+                                homeViewModel.activeTab = .timer
+                            }
                         } label: {
                             HStack {
                                 Image(systemName: "tray.and.arrow.down.fill")
@@ -245,9 +247,11 @@ struct QuickStartView: View {
                         .buttonStyle(.borderedProminent)
                         
                         Button {
-                            timerViewModel.setTrainingTapped()
-                            timerViewModel.startTimer()
-                            homeViewModel.activeTab = .timer
+                            let success = timerViewModel.setTrainingTapped()
+                            if success {
+                                timerViewModel.startTimer()
+                                homeViewModel.activeTab = .timer
+                            }
                         } label: {
                             HStack {
                                 Image(systemName: "play.circle.fill")
@@ -273,6 +277,14 @@ struct QuickStartView: View {
                 .padding(.bottom, 16)
             }
         }
+        .alert(
+                "Fehler",
+                isPresented: $timerViewModel.showStartTimerErrorAlert
+            ) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(timerViewModel.errorText)
+            }
     }
 }
 
@@ -289,6 +301,7 @@ struct SettingCard<Content: View>: View {
         VStack(alignment: .leading, spacing: 12) {
             content
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16)

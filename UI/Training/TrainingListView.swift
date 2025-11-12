@@ -89,9 +89,12 @@ struct TrainingListView: View {
                             
                         }
                         .listStyle(.automatic)
+                        .listRowSpacing(4)
                         .scrollContentBackground(.hidden) // damit der Hintergrund durchscheint
+                        .clipped()
                      //   .background(listBackgroundColor)
-                     
+                        
+                      
                     }
                 }
                 

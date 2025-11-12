@@ -25,6 +25,9 @@ class TimerViewModel: ObservableObject {
     @Published private(set) var currentExerciseIndex: Int = 0
     @Published var activeTrainingSession: TrainingSessionObject?
     
+    @Published var errorText: String = ""
+    @Published var showStartTimerErrorAlert: Bool = false
+    
     // Fertig-Flag
     @Published var isFinished: Bool = false
     
@@ -194,12 +197,18 @@ class TimerViewModel: ObservableObject {
     }
     
     // Legacy: einzelnes "Test"-Exercise starten (kompatibel zu deiner SettingsView)
-    func setTrainingTapped() {
+    func setTrainingTapped() -> Bool {
+        if roundCount <= 0 || workPhaseDuration <= 0 || restPhaseDuration <= 0 {
+            errorText = "Fülle alle Felder aus um den Timer zu starten."
+            showStartTimerErrorAlert.toggle()
+            return false
+        }
         let exercise = PlainExercise(name: "Test",
                                      rounds: roundCount,
                                      workPhaseDuration: workPhaseDuration,
                                      restPhaseDuration: restPhaseDuration)
         load(exercises: [exercise])
+        return true
     }
     
     // MARK: - Phasen/Runden/Übungs-Logik
