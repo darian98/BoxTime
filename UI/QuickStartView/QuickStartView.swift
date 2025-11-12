@@ -95,10 +95,14 @@ struct QuickStartView: View {
                     
                     // HEADER
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Schnell-Start")
-                            .font(.largeTitle.bold())
+                        HStack {
+                            Spacer()
+                            Text("Schnell-Start")
+                                .font(.largeTitle.bold())
+                            Spacer()
+                        }
                         Text("Stelle dir dein Intervall-Training in wenigen Sekunden zusammen.")
-                            .font(.subheadline)
+                            .font(.caption2)
                             .foregroundColor(.secondary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -117,8 +121,9 @@ struct QuickStartView: View {
                             }
                             Spacer()
                             Text(formattedDuration(timerViewModel.workPhaseDuration))
-                                .font(.title3.monospacedDigit())
+                                .font(.headline.monospacedDigit())
                                 .fontWeight(.semibold)
+                                .lineLimit(1)
                         }
                         
                         Slider(
@@ -153,8 +158,9 @@ struct QuickStartView: View {
                             }
                             Spacer()
                             Text(formattedDuration(timerViewModel.restPhaseDuration))
-                                .font(.title3.monospacedDigit())
-                                .fontWeight(.semibold)
+                                .font(.headline.monospacedDigit())
+                                .fontWeight(.medium)
+                                .lineLimit(1)
                         }
                         
                         Slider(
@@ -189,13 +195,14 @@ struct QuickStartView: View {
                             }
                             Spacer()
                             Text("\(timerViewModel.roundCount)")
-                                .font(.title3.monospacedDigit())
+                                .font(.headline.monospacedDigit())
                                 .fontWeight(.semibold)
+                                .lineLimit(1)
                         }
                         
                         Slider(
                             value: roundCountBinding,
-                            in: 1...30, // bis 30 Runden
+                            in: 1...15, // bis 30 Runden
                             step: 1
                         ) {
                             Text("Rundenzahl")
@@ -206,7 +213,7 @@ struct QuickStartView: View {
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                             Spacer()
-                            Text("30 Runden")
+                            Text("15 Runden")
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                         }
@@ -222,63 +229,59 @@ struct QuickStartView: View {
                                 Spacer()
                                 
                                 Text(formattedTotalDuration(totalTrainingSeconds))
-                                    .font(.title2.monospacedDigit())
+                                    .font(.headline.monospacedDigit())
                                     .fontWeight(.bold)
                             }
-                            
-                            Text("Basierend auf \(timerViewModel.roundCount) Runden · \(formattedDuration(timerViewModel.workPhaseDuration)) Work + \(formattedDuration(timerViewModel.restPhaseDuration)) Rest pro Runde.")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
                         }
                     }
                     .padding(.horizontal)
                     
                     // Aktion-Buttons
-                    VStack(spacing: 12) {
-                        Button {
-                            let success = timerViewModel.setTrainingTapped()
-                            if success {
-                                homeViewModel.activeTab = .timer
-                            }
-                        } label: {
-                            HStack {
-                                Image(systemName: "tray.and.arrow.down.fill")
-                                Text("Speichern und zum Timer")
-                            }
-                            .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        
-                        Button {
-                            let success = timerViewModel.setTrainingTapped()
-                            if success {
-                                timerViewModel.startTimer()
-                                homeViewModel.activeTab = .timer
-                            }
-                        } label: {
-                            HStack {
-                                Image(systemName: "play.circle.fill")
-                                Text("Jetzt starten")
-                            }
-                            .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(.green)
-                    }
-                    .padding(.horizontal)
-                    .padding(.bottom, 8)
+//                    VStack(spacing: 12) {
+//                        Button {
+//                            let success = timerViewModel.setTrainingTapped()
+//                            if success {
+//                                homeViewModel.activeTab = .timer
+//                            }
+//                        } label: {
+//                            HStack {
+//                                Image(systemName: "tray.and.arrow.down.fill")
+//                                Text("Speichern und zum Timer")
+//                            }
+//                            .frame(maxWidth: .infinity)
+//                        }
+//                        .buttonStyle(.borderedProminent)
+//                        
+//                        Button {
+//                            let success = timerViewModel.setTrainingTapped()
+//                            if success {
+//                                timerViewModel.startTimer()
+//                                homeViewModel.activeTab = .timer
+//                            }
+//                        } label: {
+//                            HStack {
+//                                Image(systemName: "play.circle.fill")
+//                                Text("Jetzt starten")
+//                            }
+//                            .frame(maxWidth: .infinity)
+//                        }
+//                        .buttonStyle(.borderedProminent)
+//                        .tint(.green)
+//                    }
+//                    .padding(.horizontal)
+//                    .padding(.bottom, 8)
                 }
             }
             
-            // Ad-Banner unten
-            if !PremiumManager.shared.hasPremium {
-                AdBannerView(
-                    adUnitID: "ca-app-pub-3940256099942544/2435281174", // Test-ID
-                    bannerType: .largeBanner
-                )
-                .frame(height: BannerType.largeBanner.height)
-                .padding(.bottom, 16)
-            }
+//            // Ad-Banner unten
+//            if !PremiumManager.shared.hasPremium {
+//                AdBannerView(
+//                    adUnitID: "ca-app-pub-3940256099942544/2435281174", // Test-ID
+//                    bannerType: .largeBanner
+//                )
+//                .frame(height: BannerType.largeBanner.height)
+//                .padding(.bottom, 16)
+//            }
         }
         .alert(
                 "Fehler",
@@ -288,6 +291,59 @@ struct QuickStartView: View {
             } message: {
                 Text(timerViewModel.errorText)
             }
+        // >>> Fixe Leiste am unteren Bildschirmrand (innerhalb der Safe Area)
+            .safeAreaInset(edge: .bottom) {
+                VStack(spacing: 8) {
+
+                    // Werbung bleibt – fix am unteren Rand
+//                    if !PremiumManager.shared.hasPremium {
+//                        AdBannerView(
+//                            adUnitID: "ca-app-pub-3940256099942544/2435281174",
+//                            bannerType: .largeBanner
+//                        )
+//                        .frame(height: BannerType.largeBanner.height)
+//                    }
+
+                    // Kleinere Buttons
+                    HStack(spacing: 10) {
+                        Button {
+                            let success = timerViewModel.setTrainingTapped()
+                            if success { homeViewModel.activeTab = .timer }
+                        } label: {
+                            HStack {
+                                Image(systemName: "tray.and.arrow.down.fill")
+                                Text("Speichern")
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.regular)
+
+                        Button {
+                            let success = timerViewModel.setTrainingTapped()
+                            if success {
+                                timerViewModel.startTimer()
+                                homeViewModel.activeTab = .timer
+                            }
+                        } label: {
+                            HStack {
+                                Image(systemName: "play.circle.fill")
+                                Text("Start")
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.green)
+                        .controlSize(.regular)
+                    }
+                    .padding(.horizontal)
+                    .padding(.bottom, 6)
+                    
+                }
+                .background(.ultraThinMaterial)
+                .overlay(Divider(), alignment: .top)
+            }
+
     }
 }
 

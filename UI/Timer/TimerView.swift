@@ -164,8 +164,7 @@ struct TimerView: View {
                 }
             }
             .padding(.horizontal)
-            .padding(.bottom)
-            .safeAreaPadding(.top, 20)
+            .safeAreaPadding(.top, 8)
         }
     }
 }
