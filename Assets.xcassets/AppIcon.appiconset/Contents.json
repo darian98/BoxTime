@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "gloveAndTimerYellow.png",
+      "filename" : "fightTimerLogo1 1.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -13,7 +13,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "gloveAndTimerYellow 1.png",
+      "filename" : "fightTimerLogo1.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -25,7 +25,7 @@
           "value" : "tinted"
         }
       ],
-      "filename" : "gloveAndTimerYellow 2.png",
+      "filename" : "fightTimerLogo1 2.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"

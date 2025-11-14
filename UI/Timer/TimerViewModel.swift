@@ -159,6 +159,28 @@ class TimerViewModel: ObservableObject {
         configureForCurrentExercise(resetRounds: true)
     }
     
+    func playEndOfRoundBellWhenNeeded() {
+        if activePhase == .work {
+            if remainingSec == 0 {
+                SoundPlayer.shared.playSound(named: "bellRoundEnd", ext: "mp3", duration: 3)
+            }
+        }
+    }
+    
+    // Bell for 10 Seconds left in WORK-Phase
+    func play10SecondsLeftBellWhenNeeded() {
+        if activePhase == .work {
+            if remainingSec == 10 {
+                SoundPlayer.shared.playSound(named: "twoClaps", ext: "mp3")
+            }
+        }
+    }
+    
+    
+    func playOpeningBellWhenNeeded(duration: TimeInterval? = nil) {
+        SoundPlayer.shared.playSound(named: "openingBell", ext: "mp3", duration: duration)
+    }
+    
     // MARK: - Steuerung
     func startTimer() {
         guard !isRunning else { return }
@@ -190,8 +212,11 @@ class TimerViewModel: ObservableObject {
                     self.pause()
                     return
                 }
-                
                 self.remainingSec -= 1
+                
+                play10SecondsLeftBellWhenNeeded()
+                playEndOfRoundBellWhenNeeded()
+                
                 if self.remainingSec == 0 {
                     self.handlePhaseSwitch()
                 }
@@ -286,6 +311,7 @@ class TimerViewModel: ObservableObject {
             activePhase = .work
             remainingSec = ex.workPhaseDuration
             currentRound = min(currentRound + 1, ex.rounds)
+            playOpeningBellWhenNeeded(duration: 0.6)
         } else {
             // Übung fertig
             advanceExerciseOrFinish()
@@ -302,6 +328,7 @@ class TimerViewModel: ObservableObject {
             isFinished = true
             currentRound = 0
             remainingSec = 0
+            reset()
         }
     }
     

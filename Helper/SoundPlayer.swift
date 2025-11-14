@@ -9,6 +9,7 @@ import AVFoundation
 final class SoundPlayer {
     static let shared = SoundPlayer()
     private var player: AVAudioPlayer?
+    private var stopTimer: Timer?
 
     private init() {
         // Spielt auch im Stummmodus (falls gewünscht). Wenn es Stumm respektieren soll: .ambient
@@ -16,11 +17,11 @@ final class SoundPlayer {
         try? AVAudioSession.sharedInstance().setActive(true)
     }
 
-    func playSound(named: String, ext: String) {
-        play(named: named, ext: ext) // oder wav/aiff etc.
+    func playSound(named: String, ext: String, duration: TimeInterval? = nil) {
+        play(named: named, ext: ext, duration: duration) // oder wav/aiff etc.
     }
 
-    private func play(named: String, ext: String) {
+    private func play(named: String, ext: String, duration: TimeInterval?) {
         guard let url = Bundle.main.url(forResource: named, withExtension: ext) else {
             print("⚠️ Sound \(named).\(ext) nicht gefunden")
             return
@@ -29,6 +30,12 @@ final class SoundPlayer {
             player = try AVAudioPlayer(contentsOf: url)
             player?.prepareToPlay()
             player?.play()
+            
+            if let duration = duration {
+                stopTimer = Timer.scheduledTimer(withTimeInterval: duration, repeats: false) { [weak self] _ in
+                    self?.player?.stop()
+                }
+            }
         } catch {
             print("⚠️ Konnte Sound nicht abspielen: \(error)")
         }
